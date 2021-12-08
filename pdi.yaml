@@ -1,0 +1,58 @@
+esphome:
+  name: pdi
+  platform: ESP32
+  board: esp32dev
+
+# Enable logging
+logger:
+  level: VERBOSE
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "0919913bdcd83a6c55934ecfe3a57b02"
+
+wifi:
+  ssid: "<3<3<3"
+  password: "W3cJ3J25na*"
+
+captive_portal:
+
+
+sensor:
+  - platform: adc
+    pin: GPIO32
+    name: "Room Brightness"
+    update_interval: 10s
+    
+  - platform: dht
+    pin: GPIO33
+    model: DHT22
+    temperature:
+      name: "Room Temperature"
+      id: temp
+    humidity:
+      name: "Room Humidity"
+      id: hum
+    update_interval: 10s
+  
+i2c:
+  sda: GPIO5
+  scl: GPIO4
+  scan: true
+  id: bus_a
+  
+font:
+  - file: 'fonts/timr45w.ttf'
+    id: font1
+    size: 10
+    
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    i2c_id: bus_a
+    address: 0x3C
+    lambda: |-
+      it.printf(10, 10, id(font1), TextAlign::BASELINE_LEFT, "Temperature: %.1f°C", id(temp).state);
+      it.printf(10, 25, id(font1), TextAlign::BASELINE_LEFT, "Humidity: %.1f%%", id(hum).state);
