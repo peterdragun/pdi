@@ -1,3 +1,8 @@
+# PDI 2021
+# Authors:
+#    Peter Dragúň <xdragu01@stud.fit.vutbr.cz>
+#    Michal Krůl  <xkrulm00@stud.fit.vutbr.cz>
+
 esphome:
   name: pdi
   comment: Air qualitty controll
