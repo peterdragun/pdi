@@ -35,8 +35,8 @@ i2c:
     scl: GPIO4
     scan: true
   - id: bus_ccs811
-    sda: GPIO18
-    scl: GPIO19
+    sda: GPIO23
+    scl: GPIO22
   
 uart:
   rx_pin: GPIO16
@@ -55,7 +55,7 @@ sensor:
     icon: "mdi:percent"
     
   - platform: adc
-    pin: GPIO34
+    pin: GPIO33
     name: "Gas Sensor"
     id: gas
     update_interval: 10s
@@ -65,7 +65,7 @@ sensor:
     icon: "mdi:percent"
     
   - platform: dht
-    pin: GPIO33
+    pin: GPIO15
     model: DHT22
     temperature:
       name: "Room Temperature"
@@ -100,6 +100,7 @@ font:
     
 display:
   - platform: ssd1306_i2c
+    rotation: 180
     model: "SSD1306 128x64"
     i2c_id: bus_display
     address: 0x3C
