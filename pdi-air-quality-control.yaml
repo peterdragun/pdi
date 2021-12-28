@@ -1,0 +1,112 @@
+esphome:
+  name: pdi-air-quality-control
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  password: "1dda7026d7c5340939faa5fb76674dd3"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Pdi-Air-Quality-Control"
+    password: "o1BwHaJT7viF"
+
+mqtt:
+  broker: mqtt.nesad.fit.vutbr.cz
+  username: nesAtFitIoT
+  password: kolize304
+  
+i2c:
+  - id: bus_display
+    sda: GPIO5
+    scl: GPIO4
+    scan: true
+  - id: bus_ccs811
+    sda: GPIO23
+    scl: GPIO22
+  
+uart:
+  rx_pin: GPIO16
+  tx_pin: GPIO17
+  baud_rate: 9600
+
+sensor:
+  - platform: adc
+    pin: GPIO32
+    name: "Room Brightness"
+    id: brigh
+    update_interval: 10s
+    filters:
+      - multiply: 100
+    unit_of_measurement: "%"
+    icon: "mdi:percent"
+    
+  - platform: adc
+    pin: GPIO33
+    name: "Gas Sensor"
+    id: gas
+    update_interval: 10s
+    filters:
+      - multiply: 100
+    unit_of_measurement: "%"
+    icon: "mdi:percent"
+    
+  - platform: dht
+    pin: GPIO15
+    model: DHT22
+    temperature:
+      name: "Room Temperature"
+      id: temp
+    humidity:
+      name: "Room Humidity"
+      id: hum
+    update_interval: 10s
+    
+  - platform: mhz19
+    co2:
+      name: "MH-Z19 CO2 Value"
+      id: co2
+    temperature:
+      name: "MH-Z19 Temperature"
+    update_interval: 10s
+    automatic_baseline_calibration: false
+    
+  - platform: ccs811
+    i2c_id: bus_ccs811
+    eco2:
+      name: "CCS811 eCO2 Value"
+    tvoc:
+      name: "CCS811 Total Volatile Organic Compound"
+    address: 0x5A
+    update_interval: 10s
+  
+font:
+  - file: 'fonts/timr45w.ttf'
+    id: font1
+    size: 10
+    
+display:
+  - platform: ssd1306_i2c
+    rotation: 180
+    model: "SSD1306 128x64"
+    i2c_id: bus_display
+    address: 0x3C
+    lambda: |-
+      it.printf(10, 10, id(font1), TextAlign::BASELINE_LEFT, "Temperature: %.1f°C", id(temp).state);
+      it.printf(10, 25, id(font1), TextAlign::BASELINE_LEFT, "Humidity: %.1f%%", id(hum).state);
+      it.printf(10, 40, id(font1), TextAlign::BASELINE_LEFT, "Brightness: %.1f%%", (id(brigh).state > 100) ? 100 : id(brigh).state);
+      it.printf(10, 55, id(font1), TextAlign::BASELINE_LEFT, "C02: %.1fppm", id(co2).state);
+
